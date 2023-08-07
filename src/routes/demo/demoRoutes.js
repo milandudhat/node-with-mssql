@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/', demoContoller.demo);
 router.post('/', demoContoller.addDemo);
-router.put('/:id', demoContoller.updateDemo);
-router.delete('/:id', demoContoller.deleteDemo);
+router.put('/', demoContoller.updateDemo);
+router.delete('/', demoContoller.deleteDemo);
 
 module.exports = router;

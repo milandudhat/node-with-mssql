@@ -6,7 +6,7 @@ const db = require('../../db/conn.js');
 const demo = async (req, res) => {
     try {
         const demo = await DemoService.demo();
-        return demo
+        return APIResponseFormat._ResDataFound(res, demo);
     } catch (error) {
         return APIResponseFormat._ResServerError(res, error);
     }
@@ -14,9 +14,10 @@ const demo = async (req, res) => {
 
 const addDemo = async (req, res) => {
     try {
-        console.log(req.body);
+        // console.log(req.body);
         const newDemo = await DemoService.addDemo(req.body);
-        return newDemo
+        if(newDemo.rowsAffected[0] === 0) return APIResponseFormat._ResDataNotCreated(res);
+        return APIResponseFormat._ResDataCreated(res, newDemo);
     } catch (error) {
         return APIResponseFormat._ResServerError(res, error);
     }
@@ -24,8 +25,10 @@ const addDemo = async (req, res) => {
 
 const updateDemo = async (req, res) => {
     try {
-        const updatedDemo = await DemoService.updateDemo(req.params.id, req.body);
-        return updatedDemo
+        let id = req.headers.id;
+        const updatedDemo = await DemoService.updateDemo(id, req.body);
+        if(updatedDemo.rowsAffected[0] === 0) return APIResponseFormat._ResDataNotUpdated(res);
+        return APIResponseFormat._ResDataUpdated(res, updatedDemo);
     } catch (error) {
         return APIResponseFormat._ResServerError(res, error);
     }
@@ -33,8 +36,10 @@ const updateDemo = async (req, res) => {
 
 const deleteDemo = async (req, res) => {
     try {
-        const deletedDemo = await DemoService.deleteDemo(req.params.id);
-        return deletedDemo
+        const id = req.headers.id;
+        const deletedDemo = await DemoService.deleteDemo(id);
+        if(deletedDemo.rowsAffected[0] === 0) return APIResponseFormat._ResDataNotDeleted(res);
+        return APIResponseFormat._ResDataDeleted(res, deletedDemo);
     } catch (error) {
         return APIResponseFormat._ResServerError(res, error);
     }

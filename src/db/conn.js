@@ -1,6 +1,5 @@
 const sql = require('mssql');
 
-
 const sqlConfig = {
     user: 'cccadm',
     password: 'ccc@123',
@@ -12,54 +11,28 @@ const sqlConfig = {
         instancename: '',
         encrypt: false
     },
-    port : 1433
+    port: 1433,
+    connectionTimeout: 300000, // Maximum time to establish a connection
+    pool: {
+        max: 10, // Maximum number of connections in the pool
+        min: 0,  // Minimum number of connections in the pool
+        idleTimeoutMillis: 30000 // Time a connection can be idle in the pool before being closed
+    },
+    requestTimeout: 300000, // Maximum time for a database request to complete
+    stream: false, // Whether to enable streaming of records
 };
 
-
-const conn = async () => {
-    try {
-        const pool = await sql.connect(sqlConfig);
+// Connect to the SQL Server using the provided configuration
+const poolPromise = new sql.ConnectionPool(sqlConfig)
+    .connect()
+    .then(pool => {
         console.log("Database Connected");
         return pool;
-    } catch (error) {
+    })
+    .catch(error => {
         console.log(error);
         throw error;
-    }
-};
-
-conn().then((db) => {
-    module.exports = db;
-}).catch((error) => {
-    console.log(error);
-});
-
-
-
-conn().then((db) => {
-    db.query(`SELECT * FROM information_schema.tables`).then((result) => {
-        console.log(result);
-    }).catch((error) => {
-        console.log(error);
     });
-}).catch((error) => {
-    console.log(error);
-});
 
-/* DemoTable - first_name , last_name */ 
-// insert into this table write sql.query
-
-// conn().then((db) => {
-//     db.query(`INSERT INTO DemoTable (first_name , last_name) VALUES ('Rahul' , 'Kumar')`).then((result) => {
-//         console.log(result);
-//     }).catch((error) => {
-//         console.log(error);
-//     });
-// }).catch((error) => {
-//     console.log(error);
-// });
-
-
-
-
-
-module.exports = conn;
+// Export the connection pool so it can be used in other files
+module.exports = poolPromise;

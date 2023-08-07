@@ -1,11 +1,15 @@
-const conn = require('../../db/conn.js');
+const poolPromise = require('../../db/conn.js');
+const APIResponseFormat = require('../../utils/APIResponseFormat.js');
+const sql = require('mssql');
 
 
 
 const demo = async (req, res) => {
     try {
-        const demo = await Demo.findAll();
-        return demo
+        const pool = await poolPromise; // Wait for the connection pool to be established
+        // const result = await pool.request().query('SELECT TABLE_NAME FROM information_schema.tables');
+        const result = await pool.request().query('SELECT * FROM milan');
+        return result.recordset;
     } catch (error) {
         throw error;
     }
@@ -13,26 +17,18 @@ const demo = async (req, res) => {
 
 const addDemo = async (demo) => {
     try {
-        /* DemoTable - first_name , last_name */
-        /*
-        {
-            "first_name" : "Rahul",
-            "last_name" : "Kumar"
-        }
+        // console.log(demo);
+        /* first_name and last_name are the columns in the table */
+        const pool = await poolPromise; // Wait for the connection pool to be established
+        const result = await pool.request()
+            .input('first_name', sql.VarChar(), demo.first_name)
+            .input('last_name', sql.VarChar(), demo.last_name)
+            .query('INSERT INTO milan (first_name, last_name) VALUES (@first_name, @last_name)');
 
-        */
-       console.log(demo);
-    //    conn().then((db) => {
-    //     db.query(`INSERT INTO DemoTable (first_name , last_name) VALUES ('${demo.first_name}' , '${demo.last_name}')`).then((result) => {
-    //         console.log(result);
-    //         return result;
-    //     }).catch((error) => {
-    //         console.log(error);
-    //     });
-    // }).catch((error) => {
-    //     console.log(error);
-    // });
+        
+            console.log(result);
 
+        return result;
     } catch (error) {
         throw error;
     }
@@ -40,12 +36,16 @@ const addDemo = async (demo) => {
 
 const updateDemo = async (id, demo) => {
     try {
-        const updatedDemo = await Demo.update(demo, {
-            where: {
-                id: id
-            }
-        });
-        return updatedDemo
+        let pool = await poolPromise; // Wait for the connection pool to be established
+        let result = await pool.request()
+            .input('id', sql.Int(), id)
+            .input('first_name', sql.VarChar(), demo.first_name)
+            .input('last_name', sql.VarChar(), demo.last_name)
+            .query('UPDATE milan SET first_name = @first_name, last_name = @last_name WHERE id = @id');
+
+
+
+        return result;
     } catch (error) {
         throw error;
     }
@@ -53,12 +53,13 @@ const updateDemo = async (id, demo) => {
 
 const deleteDemo = async (id) => {
     try {
-        const deletedDemo = await Demo.destroy({
-            where: {
-                id: id
-            }
-        });
-        return deletedDemo
+        // let ids = 1;
+        const pool = await poolPromise; // Wait for the connection pool to be established
+        const result = await pool.request()
+            .input('id', sql.Int(), id)
+            .query('DELETE FROM milan WHERE id = @id');
+            
+        return result;
     } catch (error) {
         throw error;
     }

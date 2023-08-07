@@ -2,7 +2,7 @@ const express = require('express');
 const setRoutes = require('./setters/routeSetters');
 require('dotenv').config();
 const APIResponseFormat = require('./utils/APIResponseFormat');
-const connect = require('./db/conn');
+const db = require('./db/conn.js');
 
 const app = express();
 
