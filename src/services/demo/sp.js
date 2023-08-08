@@ -22,10 +22,12 @@ const demo = async (req, res) => {
                                 SELECT * FROM milan
 
                                 SELECT @total = COUNT(*) FROM milan
+
+                                return @total
                             END`);
 
         // Now that the stored procedure is created, you can use it
-        // request.output('total', sql.Int() );
+        request.output('total', sql.Int() );
         const result = await request.execute('GetDemo');
         console.log(result);
         return result;
