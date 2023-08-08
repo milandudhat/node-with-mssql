@@ -7,5 +7,6 @@ router.get('/', demoContoller.demo);
 router.post('/', demoContoller.addDemo);
 router.put('/', demoContoller.updateDemo);
 router.delete('/', demoContoller.deleteDemo);
+router.get('/getDemoById', demoContoller.getDemoById);
 
 module.exports = router;

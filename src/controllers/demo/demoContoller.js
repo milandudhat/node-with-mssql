@@ -45,9 +45,20 @@ const deleteDemo = async (req, res) => {
     }
 }
 
+const getDemoById = async (req, res) => {
+    try {
+        const id = req.headers.id;
+        const demo = await DemoService.getDemoById(id);
+        return APIResponseFormat._ResDataFound(res, demo);
+    } catch (error) {
+        return APIResponseFormat._ResServerError(res, error);
+    }
+}
+
 module.exports = {
     demo,
     addDemo,
     updateDemo,
-    deleteDemo
+    deleteDemo,
+    getDemoById
 }

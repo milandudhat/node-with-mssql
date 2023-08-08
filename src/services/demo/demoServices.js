@@ -173,13 +173,53 @@ const deleteDemo = async (id) => {
     catch (error) {
         throw error;
     }
-    
-
 }
+
+const getDemoById = async (id) => {
+    // try {
+    //     const pool = await poolPromise; // Wait for the connection pool to be established
+    //     const result = await pool.request()
+    //         .input('id', sql.Int(), id)
+    //         .query('SELECT * FROM milan WHERE id = @id');
+    //     return result;
+    // } catch (error) {
+    //     throw error;
+    // }
+
+    try {
+        let pool = await poolPromise; // Wait for the connection pool to be established
+        let request = pool.request();
+        await request.query(`IF OBJECT_ID('GetDemoById', 'P') IS NOT NULL
+                            DROP PROCEDURE GetDemoById`);
+
+        // Create the new stored procedure
+        await request.query(`
+        CREATE PROCEDURE GetDemoById
+            @id INT
+        AS
+        BEGIN
+            SELECT * FROM milan WHERE id = @id
+        END
+    `);
+
+        // Now that the stored procedure is created, you can use it
+        request.input('id', sql.Int(), id);
+
+        // Execute the stored procedure
+        const result = await request.execute('GetDemoById');
+        console.log(result);
+        return result;
+    }
+    catch (error) {
+        throw error;
+    }
+}
+
 
 module.exports = {
     demo,
     addDemo,
     updateDemo,
-    deleteDemo
+    deleteDemo,
+    getDemoById
 }
