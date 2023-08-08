@@ -1,6 +1,7 @@
 const APIResponseFormat = require('../../utils/APIResponseFormat.js');
-const DemoService = require('../../services/demo/demoServices.js');
+// const DemoService = require('../../services/demo/demoServices.js');
 const db = require('../../db/conn.js');
+const DemoService = require('../../services/demo/sp.js');
 
 
 const demo = async (req, res) => {
