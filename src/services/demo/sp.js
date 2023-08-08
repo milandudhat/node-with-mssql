@@ -16,12 +16,16 @@ const demo = async (req, res) => {
 
         // Create the new stored procedure
         await request.query(`CREATE PROCEDURE GetDemo
+                                @total INT OUTPUT
                             AS
                             BEGIN
                                 SELECT * FROM milan
+
+                                SELECT @total = COUNT(*) FROM milan
                             END`);
 
         // Now that the stored procedure is created, you can use it
+        // request.output('total', sql.Int() );
         const result = await request.execute('GetDemo');
         console.log(result);
         return result;
