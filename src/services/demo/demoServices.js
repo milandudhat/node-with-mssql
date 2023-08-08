@@ -198,7 +198,7 @@ const getDemoById = async (id) => {
             @id INT
         AS
         BEGIN
-            SELECT * FROM milan WHERE id = @id
+            SELECT first_name FROM milan WHERE id = @id
         END
     `);
 
@@ -208,7 +208,7 @@ const getDemoById = async (id) => {
         // Execute the stored procedure
         const result = await request.execute('GetDemoById');
         console.log(result);
-        return result;
+        return result.recordsets[0];
     }
     catch (error) {
         throw error;
